@@ -14,3 +14,14 @@ def courses(request):
         'courses': courses
     }
     return render(request, 'courses.html', context)
+
+def grades(request, course_id):
+    course = Course.objects.get(id = course_id)
+    # order the grades in descending order
+    grades = course.grade_set.order_by('-grade')
+
+    context = {
+        'course': course,
+        'grades': grades
+    }
+    return render(request, 'grades.html', context)

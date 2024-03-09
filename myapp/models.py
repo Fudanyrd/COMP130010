@@ -27,5 +27,22 @@ class Grade(models.Model):
     # grades of students won't exceed 100.00, decimal place won't exceed two.
     grade = models.DecimalField(max_digits=5, decimal_places=2)
 
+    def bar_chart(self):
+        """ return the bar chart representation"""
+        value = int(self.grade)
+        repr = ''
+        for i in range(value // 2):
+            repr += '='
+        repr += '>'
+        for i in range(50 - value // 2):
+            repr += ' '
+        repr += '|'
+        repr += str(self.grade)
+        return repr
+    
+    def passed(self) -> bool:
+        """ return true if student passed the course."""
+        return float(self.grade) >= 60.0
+
     def __str__(self):
-        return str(self.grade)
+        return str(self.student) + ': ' + str(self.grade)

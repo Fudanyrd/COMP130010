@@ -3,7 +3,7 @@
 {% block content %}
   <ul>
     {% for course in courses %}
-      <li>{{ course }}</li>
+      <li>{{ course }}<a href="{% url 'myapp:grades' course.id %}">View Grade of This Course</a></li>
     {% empty %}
       <li>No courses added! Contact website manager to add one.</li>
     {% endfor %}

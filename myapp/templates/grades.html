@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <p>This is a list of all grades from course {{ course }}</p>
+  <ul>
+    {% for grade in grades %}
+      <li>{{ grade }}</li>
+      {% if grade.passed %}
+      <p style="color:green">{{ grade.bar_chart }}</p>
+      {% else %}
+      <p style="color:red">{{ grade.bar_chart }}</p>
+      {% endif %}
+    {% empty %}
+      <li>No students have enrolled in this course.</li>
+    {% endfor %}
+  </ul>
+{% endblock content %}
