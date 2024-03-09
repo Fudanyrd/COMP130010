@@ -4,7 +4,7 @@
   <p>This is a list of all grades from course {{ course }}</p>
   <ul>
     {% for grade in grades %}
-      <li>{{ grade }}</li>
+      <li>{{ grade }} <a href="{% url 'myapp:regrade' grade.id %}">Regrade this</a></li>
       {% if grade.passed %}
       <p style="color:green">{{ grade.bar_chart }}</p>
       {% else %}

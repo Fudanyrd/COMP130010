@@ -3,6 +3,7 @@ from .models import Student, Course, Grade
 from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from .forms import RegradeForm
 
 # Create your views here.
 def index(request):
@@ -25,3 +26,18 @@ def grades(request, course_id):
         'grades': grades
     }
     return render(request, 'grades.html', context)
+
+def regrade(request, grade_id):
+    """ regrade a entry(on course, student)"""
+    grade_obj = Grade.objects.get(id=grade_id)
+    course = grade_obj.course
+    if request.method != 'POST':
+        form = RegradeForm(instance=grade_obj)
+    else:
+        form = RegradeForm(instance=grade_obj,data=request.POST)
+        if form.is_valid():
+            form.save()
+            # get the course id and redirect there.
+            return HttpResponseRedirect(reverse('myapp:grades', args=[course.id]))
+    context = {'form': form, 'grade': grade_obj, 'course': course}
+    return render(request, 'regrade.html', context)
