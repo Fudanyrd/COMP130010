@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <ul>
+    {% for course in courses %}
+      <li>{{ course }}</li>
+    {% empty %}
+      <li>No courses added! Contact website manager to add one.</li>
+    {% endfor %}
+  </ul>
+{% endblock content %}
