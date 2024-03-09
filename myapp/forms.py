@@ -13,3 +13,9 @@ class GradeForm(forms.ModelForm):
         model = Grade
         fields = ['grade']
         labels = {'text': ''}
+
+class GradeAllForm(forms.ModelForm):
+    class Meta:
+        model = Grade
+        fields = ['student','grade']
+        labels = {'text': 'student'}

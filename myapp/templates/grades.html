@@ -24,4 +24,9 @@
     </li>
     {% endfor %}
   </ul>
+
+  <p> 
+    For convenience, you may use this <a href="{% url 'myapp:gradeall' course.id %}">link</a> 
+    to grade all students in one form.
+  </p>
 {% endblock content %}

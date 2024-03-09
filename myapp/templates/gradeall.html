@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="{% url 'myapp:gradeall' course.id %}" method="post">
+  {% csrf_token %}
+  {% for form in forms %}
+    {{ form.as_p }} 
+  {% endfor %}
+    <button name="submit">Confirm Changes</button>
+</form>
+{% endblock content %}

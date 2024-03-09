@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^courses$', views.courses, name='courses'),
     url(r'^grades/(?P<course_id>\d+)/$', views.grades, name='grades'),
+    url(r'^gradeall/(?P<course_id>\d+)/$', views.gradeall, name='gradeall'),
     url(r'^regrade/(?P<grade_id>\d+)/$', views.regrade, name='regrade'),
     url(r'givegrade/(?P<course_id>\d+)/(?P<student_id>\d+)/$', views.givegrade, name='givegrade'),
 ]
