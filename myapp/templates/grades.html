@@ -13,5 +13,15 @@
     {% empty %}
       <li>No students have enrolled in this course.</li>
     {% endfor %}
+
+    {% for student in ungraded %}
+    <li>{{ student }}: Ungraded 
+      {% if student.gender == 'M' %}
+        <a href="{% url 'myapp:givegrade' course.id student.id %}">Grade Him</a>        
+      {% else %}
+        <a href="{% url 'myapp:givegrade' course.id student.id %}">Grade Her</a>
+      {% endif %}
+    </li>
+    {% endfor %}
   </ul>
 {% endblock content %}

@@ -21,13 +21,21 @@ class Course(models.Model):
     def __str__(self):
         return self.cid + '-' + self.cname
 
+class Takes(models.Model):
+    """ represent students takes courses"""
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.student.sname + '-' + self.course.cname
+
 class Grade(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     # grades of students won't exceed 100.00, decimal place won't exceed two.
     grade = models.DecimalField(max_digits=5, decimal_places=2)
 
-    def bar_chart(self):
+    def bar_chart(self) -> str:
         """ return the bar chart representation"""
         value = int(self.grade)
         repr = ''

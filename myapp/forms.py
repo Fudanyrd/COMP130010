@@ -7,3 +7,9 @@ class RegradeForm(forms.ModelForm):
         model = Grade
         fields = ['grade']
         labels = {'text': ''}
+
+class GradeForm(forms.ModelForm):
+    class Meta:
+        model = Grade
+        fields = ['grade']
+        labels = {'text': ''}
