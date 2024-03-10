@@ -12,11 +12,16 @@ class Student(models.Model):
     def __str__(self):
         return self.sid + '-' +self.sname
 
+class Instructor(models.Model):
+    tid = models.CharField(max_length=20)
+    tname= models.CharField(max_length=50)
+    faculty = models.CharField(max_length=50)
+
 class Course(models.Model):
     cid = models.CharField(max_length=20) 
     cname = models.CharField(max_length=50)
     credit = models.IntegerField()
-    teacher = models.CharField(max_length=50)
+    teacher = models.ForeignKey(Instructor, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.cid + '-' + self.cname

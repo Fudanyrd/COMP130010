@@ -7,6 +7,12 @@
 
 <body>
     <p> Welcome to My App!</p>
+    {% if user.is_authenticated %}
+    <p>Hello, {{ user.username }}</p> -
+    <a href="{% url 'users:logout' %}">logout</a>
+    {% else %}
+    <a href="{% url 'users:login' %}">login</a>
+    {% endif %}
     {% block content %}
     {% endblock content %}
 </body>

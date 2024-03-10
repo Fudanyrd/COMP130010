@@ -13,6 +13,7 @@ import mysql.connector
 def index(request):
     return render(request, 'index.html')
 
+@login_required
 def courses(request):
     courses = Course.objects.order_by('cid')
     context = {
@@ -20,6 +21,7 @@ def courses(request):
     }
     return render(request, 'courses.html', context)
 
+@login_required
 def grades(request, course_id):
     course = Course.objects.get(id = course_id)
     # order the grades in descending order
@@ -41,6 +43,7 @@ def grades(request, course_id):
     }
     return render(request, 'grades.html', context)
 
+@login_required
 def regrade(request, grade_id):
     """ regrade a entry(on course, student)"""
     grade_obj = Grade.objects.get(id=grade_id)
@@ -56,6 +59,7 @@ def regrade(request, grade_id):
     context = {'form': form, 'grade': grade_obj, 'course': course}
     return render(request, 'regrade.html', context)
 
+@login_required
 def givegrade(request, course_id, student_id):
     """ give a student his/her grade"""
     student = Student.objects.get(id=student_id)
@@ -90,6 +94,7 @@ def GradeAllHelper(
         return True
     return False
 
+@login_required
 def gradeall(request, course_id):
     course = Course.objects.get(id=course_id)
     ungraded = set()

@@ -2,10 +2,13 @@
 
 {% block content %}
 <form action="{% url 'myapp:gradeall' course.id %}" method="post">
+  <ul>
   {% csrf_token %}
   {% for form in forms %}
-    {{ form.as_p }} 
+    <!--citation: https://docs.djangoproject.com/en/5.0/ref/forms/api/#outputting-forms-as-html-->
+    <li>{{ form.as_table }} </li> 
   {% endfor %}
     <button name="submit">Confirm Changes</button>
+  </ul>
 </form>
 {% endblock content %}
