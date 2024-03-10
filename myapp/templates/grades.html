@@ -10,8 +10,6 @@
       {% else %}
       <p style="color:red">{{ grade.bar_chart }}</p>
       {% endif %}
-    {% empty %}
-      <li>No students have enrolled in this course.</li>
     {% endfor %}
 
     {% for student in ungraded %}
@@ -22,9 +20,14 @@
         <a href="{% url 'myapp:givegrade' course.id student.id %}">Grade Her</a>
       {% endif %}
     </li>
+    {% empty %}
+    <p>You have given grades to all students.</p>
     {% endfor %}
   </ul>
 
+  <p>
+    You may want to view grades as a table. <a href="{% url 'myapp:gradetb' course.id %}">link</a>
+  </p>
   <p> 
     For convenience, you may use this <a href="{% url 'myapp:gradeall' course.id %}">link</a> 
     to grade all students in one form.

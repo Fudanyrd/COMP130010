@@ -9,6 +9,11 @@ class Student(models.Model):
     year = models.IntegerField()
     faculty = models.CharField(max_length=50)
 
+    def name(self):
+        return self.sname
+    def id(self):
+        return self.sid
+
     def __str__(self):
         return self.sid + '-' +self.sname
 
@@ -59,6 +64,14 @@ class Grade(models.Model):
     def passed(self) -> bool:
         """ return true if student passed the course."""
         return float(self.grade) >= 60.0
+    
+    def value(self):
+        return str(self.grade)
+
+    def sname(self):
+        return self.student.sname
+    def sid(self):
+        return self.student.sid
 
     def __str__(self):
         return str(self.student) + ': ' + str(self.grade)

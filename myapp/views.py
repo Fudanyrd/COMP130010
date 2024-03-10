@@ -7,6 +7,24 @@ from django.contrib.auth.decorators import login_required
 from .forms import RegradeForm, GradeForm, GradeAllForm
 import mysql.connector
 
+def avg_grade(course_id):
+    """ given the course id, calculate its average grade"""
+    connection = mysql.connector.connect(
+        user = 'root',
+        password = 'Yrd37538311',
+        database = 'grade'
+    )
+    cursor = connection.cursor()
+    cursor.execute(
+        f"""
+        SELECT AVG(grade) from myapp_grade where course_id = {course_id}
+        """
+    )
+    res = cursor.fetchone()[0]
+    cursor.close()
+    connection.close()
+    return res
+
 # citation: <https://docs.djangoproject.com/en/5.0/ref/models/querysets/>
 """
 User can have 3 types: student, instructor, admin(from academic affair center).
@@ -75,6 +93,37 @@ def grades(request, course_id):
         'ungraded': Student.objects.filter(id__in=ungraded).order_by("sname"),
     }
     return render(request, 'grades.html', context)
+
+@login_required
+def gradetb(request, course_id):
+    ut = usertype(request)
+    if ut == 'student':
+        # student doen't have access to this page!
+        raise Http404
+
+    course = Course.objects.get(id = course_id)
+    if ut != 'admin':
+        if course.teacher.tid != request.user.username:
+            # the instructor wants to access grades of course he doesn't teach...
+            raise Http404
+    grades = course.grade_set.order_by('-grade')
+    ungraded=RawSQL(
+        f"""
+        select student_id from myapp_takes where(
+          course_id={course_id} and student_id not in(
+            select student_id from myapp_grade where myapp_grade.course_id={course_id}
+          )
+        )
+        """, []
+    )
+
+    context = {
+        'course': course,
+        'grades': grades,
+        'average': str(avg_grade(course_id)),
+        'ungraded': Student.objects.filter(id__in=ungraded).order_by("sname"),
+    }
+    return render(request, 'gradetb.html', context)
 
 @login_required
 def regrade(request, grade_id):

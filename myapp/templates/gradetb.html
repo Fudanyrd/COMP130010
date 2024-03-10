@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block header %}
+  <link rel="stylesheet" href="styles.css" />
+  <title></title>
+{% endblock header %}
+
+{% block content %}
+  <p> This is the grades to course {{ course }} in table form.</p>
+  <hr>
+  <table>
+    <colgroup span="4"></colgroup>
+    <thead>
+    <tr>
+        <th scope="col">Student</th>
+        <th scope="col">Student ID</th>
+        <th scope="col">Grade</th>
+        <th scope="col">Operation</th>
+    </tr>
+    </thead>
+   <tbody>
+    {% for grade in grades %}
+    <tr>
+        <th scope="row">{{ grade.sname }}</th>
+        <td>{{ grade.sid }}</td>
+        {% if grade.passed %}
+        <td style="color:green">{{ grade.value }}</td>
+        {% else %}
+        <td style="color:red">{{ grade.value }}</td>
+        {% endif %}
+        <td><a href="{% url 'myapp:regrade' grade.id %}">Regrade this</a></td>
+    </tr>
+    {% endfor %}
+    {% if grades %}
+    <tr>
+        <th colspan="2" scope="row">Average grade</th>
+        <td>{{ average }} </td>
+        <td></td>
+    </tr>
+    {% endif %}
+    {% for student in ungraded %}
+    <tr>
+        <th scope="row">{{ student.name }}</th>
+        <td>{{ student.id }}</td>
+        <td style="color:blue">{{ ungraded }}</td>
+        <td>
+          {% if student.gender == 'M' %}
+            <a href="{% url 'myapp:givegrade' course.id student.id %}">Grade Him</a>        
+          {% else %}
+            <a href="{% url 'myapp:givegrade' course.id student.id %}">Grade Her</a>
+          {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+  </tbody> </table>
+  <p> 
+    For convenience, you may use this <a href="{% url 'myapp:gradeall' course.id %}">link</a> 
+    to grade all students in one form.
+  </p>
+{% endblock content %}
