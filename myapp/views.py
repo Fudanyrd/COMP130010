@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Student, Course, Grade, Takes
+from .models import Student, Course, Grade, Takes, Instructor
 from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.db.models.expressions import RawSQL
@@ -8,6 +8,22 @@ from .forms import RegradeForm, GradeForm, GradeAllForm
 import mysql.connector
 
 # citation: <https://docs.djangoproject.com/en/5.0/ref/models/querysets/>
+"""
+User can have 3 types: student, instructor, admin(from academic affair center).
+Thus we need some method to tell them apart. My machanism is that:
+1. look in the `myapp_auth` table, if it is a superuser(admin), over.
+2. look in the `myapp_instructor` table, if found, return 'instructor'
+3. the user is student.
+"""
+def usertype(request):
+    """ return the type of the user. None|instructor|student|admin"""
+    if not request.user.is_authenticated:
+        return None
+    if len(Instructor.objects.filter(tid=request.user.username)) != 0:
+        return 'instructor'
+    if len(Student.objects.filter(sid=request.user.username)) != 0:
+        return 'student'
+    return 'admin'  # those who can login but is not student/instructor is admin
 
 # Create your views here.
 def index(request):
@@ -15,7 +31,15 @@ def index(request):
 
 @login_required
 def courses(request):
-    courses = Course.objects.order_by('cid')
+    """ admin has access to all courses; while instructor only have access to the courses he/she taught"""
+    ut = usertype(request)
+    if ut == 'admin':
+        courses = Course.objects.order_by('cid')
+    elif ut == 'instructor':
+        instructor = (Instructor.objects.filter(tid=request.user.username))[0]
+        courses = Course.objects.filter(teacher=instructor).order_by('cid')
+    else:
+        raise Http404
     context = {
         'courses': courses
     }
@@ -23,7 +47,16 @@ def courses(request):
 
 @login_required
 def grades(request, course_id):
+    ut = usertype(request)
+    if ut == 'student':
+        # student doen't have access to this page!
+        raise Http404
+
     course = Course.objects.get(id = course_id)
+    if ut != 'admin':
+        if course.teacher.tid != request.user.username:
+            # the instructor wants to access grades of course he doesn't teach...
+            raise Http404
     # order the grades in descending order
     grades = course.grade_set.order_by('-grade')
     ungraded=RawSQL(
@@ -46,8 +79,16 @@ def grades(request, course_id):
 @login_required
 def regrade(request, grade_id):
     """ regrade a entry(on course, student)"""
+    ut = usertype(request)
+    if ut == 'student':
+        # student doen't have access to this page!
+        raise Http404
+
     grade_obj = Grade.objects.get(id=grade_id)
     course = grade_obj.course
+    if ut == 'instructor':
+        if course.teacher.tid != request.user.username:
+            raise Http404
     if request.method != 'POST':
         form = RegradeForm(instance=grade_obj)
     else:
@@ -62,8 +103,16 @@ def regrade(request, grade_id):
 @login_required
 def givegrade(request, course_id, student_id):
     """ give a student his/her grade"""
+    ut = usertype(request)
+    if ut == 'student':
+        # student doen't have access to this page!
+        raise Http404
+
     student = Student.objects.get(id=student_id)
     course = Course.objects.get(id=course_id)
+    if ut == 'instructor':
+        if course.teacher.tid != request.user.username:
+            raise Http404
 
     if request.method != "POST":
         form = GradeForm()
@@ -96,7 +145,15 @@ def GradeAllHelper(
 
 @login_required
 def gradeall(request, course_id):
+    ut = usertype(request)
+    if ut == 'student':
+        # student doen't have access to this page!
+        raise Http404
+
     course = Course.objects.get(id=course_id)
+    if ut == 'instructor':
+        if course.teacher.tid != request.user.username:
+            raise Http404
     ungraded = set()
     raw=RawSQL(
         f"""
