@@ -1,48 +1,46 @@
 {% extends "base.html" %}
 {% block header %}
-  <link rel="stylesheet" href="styles.css" />
-  <title></title>
 {% endblock header %}
 
 {% block content %}
   <p> This is the grades to course {{ course }} in table form.</p>
   <hr>
-  <table>
+  <table style="border: 4px solid black">
     <colgroup span="4"></colgroup>
     <thead>
     <tr>
-        <th scope="col">Student</th>
-        <th scope="col">Student ID</th>
-        <th scope="col">Grade</th>
-        <th scope="col">Operation</th>
+        <th style="border: 1px solid black" scope="col">Student</th>
+        <th style="border: 1px solid black" scope="col">Student ID</th>
+        <th style="border: 1px solid black" scope="col">Grade</th>
+        <th style="border: 1px solid black" scope="col">Operation</th>
     </tr>
     </thead>
    <tbody>
     {% for grade in grades %}
     <tr>
-        <th scope="row">{{ grade.sname }}</th>
-        <td>{{ grade.sid }}</td>
+        <th style="border: 1px solid black" scope="row">{{ grade.sname }}</th>
+        <td style="border: 1px solid black" >{{ grade.sid }}</td>
         {% if grade.passed %}
-        <td style="color:green">{{ grade.value }}</td>
+        <td style="color:green;border: 1px solid black">{{ grade.value }}</td>
         {% else %}
-        <td style="color:red">{{ grade.value }}</td>
+        <td style="color:red;border: 1px solid black">{{ grade.value }}</td>
         {% endif %}
-        <td><a href="{% url 'myapp:regrade' grade.id %}">Regrade this</a></td>
+        <td style="border: 1px solid black" ><a href="{% url 'myapp:regrade' grade.id %}">Regrade this</a></td>
     </tr>
     {% endfor %}
     {% if grades %}
     <tr>
-        <th colspan="2" scope="row">Average grade</th>
-        <td>{{ average }} </td>
-        <td></td>
+        <th colspan="2" scope="row"style="border: 1px solid black" >Average grade</th>
+        <td style="border: 1px solid black" >{{ average }} </td>
+        <td style="border: 1px solid black" ></td>
     </tr>
     {% endif %}
     {% for student in ungraded %}
     <tr>
-        <th scope="row">{{ student.name }}</th>
-        <td>{{ student.id }}</td>
-        <td style="color:blue">{{ ungraded }}</td>
-        <td>
+        <th style="border: 1px solid black"  scope="row">{{ student.name }}</th>
+        <td style="border: 1px solid black" >{{ student.id }}</td>
+        <td style="color:blue;border: 1px solid black">{{ ungraded }}</td>
+        <td style="border: 1px solid black">
           {% if student.gender == 'M' %}
             <a href="{% url 'myapp:givegrade' course.id student.id %}">Grade Him</a>        
           {% else %}
