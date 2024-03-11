@@ -6,5 +6,6 @@ app_name = 'users'
 
 urlpatterns = [
     url(r'^login/$', LoginView.as_view(template_name='login.html'), name='login'),
+    url(r'^$', views.help, name='help'),
     url(r'^logout/$', views.logout_view, name='logout'),
 ]

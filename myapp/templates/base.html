@@ -6,7 +6,7 @@
 </head>
 
 <body>
-    <p> Welcome to My App!</p>
+    <p> Welcome to My App! Help center:<a href="{% url 'users:help' %}">link</a> </p>
     {% if user.is_authenticated %}
     <p>Hello, {{ user.username }}</p> -
     <a href="{% url 'users:logout' %}">logout</a>

@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% block header %}
+<title>help-center</title>
+{% endblock header %} {% block content %}
+<div>
+  <h2>About this web app</h2>
+  <p>
+    This web app intends to help instructors fill in, view and amend grades
+    easily. All components of this app is developed by 'yrd'(who is also an
+    admin of the website).
+  </p>
+
+  <h2>To instructors</h2>
+  <p>
+    If you don't have an account, contact one of the admins from academic affair
+    center to create one (you can find their username and email list below). If
+    you find a bug of this app, feel free to report this to the developer 'yrd'
+    by email.
+  </p>
+  <h2>List of admins</h2>
+  <table>
+    <tbody>
+      {% for admin in admins %}
+      <tr>
+        <td>{{ admin.username }}</td>
+        <td>{{ admin.email }}</td>
+        <td><a href="mailto:{{ admin.email}}" >mail to him</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock content %}
