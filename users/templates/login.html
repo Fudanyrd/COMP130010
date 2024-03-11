@@ -38,6 +38,10 @@
   </div>
   <input type="hidden" name="next" value="{% url 'myapp:index' %}" />
 </form>
+<div style="margin: 80px 280px 20px 300px">
+  <hr style="color: rgb(128, 128, 128)" />
+  <p style="font-size: 20px"><b>Don't have an account? Contact the <a href="{% url 'users:help' %}">admins</a> to create one.</b></p>
+</div>
 <script>
   // this script intends to further beautify this login page.
   let inputs = document.querySelectorAll("input");
