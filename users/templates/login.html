@@ -1,13 +1,91 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block header %} {% endblock header %} {% block content %}
+<style>
+  b {
+    color: #333;
+  }
+  .buttonbar {
+    align-items: center;
+    text-align: center;
+    margin: 40px;
+  }
+  .buttonitem {
+    background-color: #337ab7;
+    width: 120px;
+    height: 50px;
+    border-radius: 6px;
+    border: 1px solid #337ab7;
+    box-shadow: 5px 3px 3px grey;
+    color: white;
+  }
+  label {
+    color: #333;
+    margin: 10px 0 10px 360px;
+  }
+</style>
+{% if form.errors %}
+<p>Your username and password didn't match, please try again!</p>
+{% endif %}
+<div style="margin: 20px 280px 20px 300px">
+  <p style="font-size: 20px"><b>Log in to your account.</b></p>
+  <hr style="color: rgb(128, 128, 128)" />
+</div>
+<form method="post" action="{% url 'users:login' %}">
+  {% csrf_token %} {{ form.as_p }}
+  <div class="buttonbar">
+    <button type="submit" name="login" class="buttonitem">
+      <b style="color: white">Sign in</b>
+    </button>
+  </div>
+  <input type="hidden" name="next" value="{% url 'myapp:index' %}" />
+</form>
+<script>
+  // this script intends to further beautify this login page.
+  let inputs = document.querySelectorAll("input");
+  let lbs = document.querySelectorAll("label");
 
-{% block content %}
-  {% if form.errors %}
-  <p>Your username and password didn't match, please try again!</p>
-  {% endif %}
-  <form method="post" action="{% url 'users:login' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button name="submit">log in</button>
-    <input type="hidden" name="next" value="{% url 'myapp:index' %}" /> 
-  </form>
+  inputs[1].placeholder = " Username";
+  inputs[2].placeholder = " Password";
+  inputs[1].style.width = inputs[2].style.width = "500px";
+  inputs[1].style.height = inputs[2].style.height = "30px";
+  inputs[1].style.borderRadius = inputs[2].style.borderRadius = "5px";
+  inputs[1].style.margin = "20px 0 10px 0";
+  inputs[2].style.margin = "10px 0 20px 5px";
+  inputs[1].style.boxShadow = inputs[2].style.boxShadow = "3px 5px 5px grey";
+  inputs[1].style.border = inputs[2].style.border = "1px solid black";
+  // inputs[2].style.marginLeft = '5px';
+
+  // add listener for input fields.
+  inputs[1].addEventListener("mouseenter", (event) => {
+    inputs[1].style.border = "4px solid blue";
+    lbs[0].style.color = "goldenrod";
+    lbs[0].style.fontSize = "20px";
+  });
+  inputs[1].addEventListener("mouseleave", (event) => {
+    inputs[1].style.border = "1px solid black";
+    lbs[0].style.color = "#333";
+    lbs[0].style.fontSize = "15px";
+  });
+  inputs[2].addEventListener("mouseenter", (event) => {
+    inputs[2].style.border = "4px solid blue";
+    lbs[1].style.color = "goldenrod";
+    lbs[1].style.fontSize = "20px";
+  });
+  inputs[2].addEventListener("mouseleave", (event) => {
+    inputs[2].style.border = "1px solid black";
+    lbs[1].style.color = "#333";
+    lbs[1].style.fontSize = "15px";
+  });
+
+  button = document.querySelector("button");
+  button.addEventListener("mouseenter", (event) => {
+    button.style.backgroundColor = "rgb(0, 64, 192)";
+    button.style.width = "140px";
+    button.style.height = "60px";
+  });
+  button.addEventListener("mouseleave", (event) => {
+    button.style.backgroundColor = "#337ab7";
+    button.style.width = "120px";
+    button.style.height = "50px";
+  });
+</script>
 {% endblock content %}

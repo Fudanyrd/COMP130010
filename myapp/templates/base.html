@@ -1,18 +1,115 @@
 <!DOCTYPE html>
 
 <head>
-    {% block header %}
-    {% endblock header %}
+  {% block header %} {% endblock header %}
+  <style>
+    .inputbar {
+      width: 800px;
+      align-items: center;
+      border-radius: 5px;
+      border: 1px solid rgb(192, 192, 192);
+      box-shadow: 5px 3px 3px grey;
+      height: 30px;
+    }
+    .inputbox {
+      align-items: center;
+      margin: 20px 100px 20px 100px;
+    }
+    .buttonbar {
+      align-items: center;
+      text-align: center;
+      margin: 40px;
+    }
+    .buttonitem {
+      background-color: #337ab7;
+      width: 120px;
+      height: 50px;
+      border-radius: 6px;
+      border: 1px solid #337ab7;
+      box-shadow: 5px 3px 3px grey;
+      color: white;
+    }
+    .loginbox {
+      width: 1000px;
+      align-items: center;
+      margin: 0 0 0 200px;
+    }
+    .flex {
+      display: flex;
+      flex-direction: row;
+      height: 50px;
+      text-align: center;
+    }
+    nav {
+      border-bottom: 1px solid #e0e0e0;
+      background-color: #f8f8f8;
+    }
+    .navbox {
+      margin: 15px 15px 10px 15px;
+      color: #333;
+    }
+    .navgreet {
+      margin: 15px 15px 10px 15px;
+      color: #333;
+    }
+    b {
+      color: #333;
+    }
+    a {
+        color: #333;
+    }
+  </style>
 </head>
 
 <body>
-    <p> Welcome to My App! Help center:<a href="{% url 'users:help' %}">link</a> </p>
-    {% if user.is_authenticated %}
-    <p>Hello, {{ user.username }}</p> -
-    <a href="{% url 'users:logout' %}">logout</a>
-    {% else %}
-    <a href="{% url 'users:login' %}">login</a>
-    {% endif %}
-    {% block content %}
-    {% endblock content %}
+  {% if user.is_authenticated %}
+  <nav>
+    <div class="flex">
+      <div class="navbox" style="font-size: x-large; margin-top: 10px">
+        Grade System
+      </div>
+      <div class="navbox"><a href="{% url 'myapp:courses' %}">Courses</a></div>
+      <div class="navgreet" style="margin-left: 360px">
+        Hello, {{ user.username}}!
+      </div>
+      <div class="navbox" style="margin-left: 400px">
+        <a href="{% url 'users:logout' %}">logout</a>
+      </div>
+      <div class="navbox"><a href="{% url 'users:help' %}">Help Center</a></div>
+    </div>
+  </nav>
+  {% else %}
+  <nav>
+    <div class="flex">
+      <div class="navbox" style="font-size: x-large; margin-top: 10px">
+        Grade System
+      </div>
+      <div class="navbox"><a href="{% url 'users:login' %}">Courses</a></div>
+      <div class="navbox" style="margin-left: 860px">
+        <a href="{% url 'users:login' %}">Login</a>
+      </div>
+      <div class="navbox"><a href="{% url 'users:help' %}">Help Center</a></div>
+    </div>
+  </nav>
+  {% endif %} {% block content %} {% endblock content %}
+<script>
+  let navboxes = document.querySelectorAll('div.navbox');
+  for (let i = 0; i < navboxes.length; ++i) {
+    navboxes[i].style.color = '#333';
+  }
+  for (let i = 1; i < navboxes.length; ++i) {
+    navboxes[i].addEventListener('mouseenter', (event) => {
+       navboxes[i].style.fontSize = '30px';  
+       navboxes[i].style.color = 'blue';
+       navboxes[i].style.marginTop = '5px';
+       navboxes[i].style.marginBottom = '5px';
+    });
+    navboxes[i].addEventListener('mouseleave', (event) => {
+       navboxes[i].style.fontSize = '18px';  
+       navboxes[i].style.color = '#333';
+       navboxes[i].style.marginTop = '15px';
+       navboxes[i].style.marginBottom = '10px';
+    });
+  }
+</script>
 </body>
