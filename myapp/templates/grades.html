@@ -32,9 +32,12 @@
   to grade all students in one form.
 </p>
 
-<canvas class="barchart" width="600" height="480"></canvas>
+<canvas class="barchart" width="800" height="480"></canvas>
 <script>
   let chart = document.querySelector('.barchart');
+  chart.style.boxShadow = '3px 5px 5px #555';
+  chart.style.borderRadius = '10px';
+  chart.style.border = '2px solid #333';
   let ctx = chart.getContext("2d");
 
   // get distribution of grades.
@@ -55,29 +58,37 @@
     return res;
   }
   // given an array, draw the bar chart.
-  draw = (arr, width, gap,maxWidth, maxHeight) => {
+  draw = (arr, width, gap,maxWidth, maxHeight, footHeight) => {
     // width is the attribute of each bar.
     // gap is the distance between bars.
     let max = 0;
     ctx.fillStyle = '#f3f3f3';
-    ctx.fillRect(0, 0, maxWidth, maxHeight);
+    ctx.fillRect(0, 0, maxWidth, maxHeight + footHeight);
     
     for (let i = 0; i < arr.length; ++i) {
       if (arr[i] > max) {
         max = arr[i];
       }
     }
-    console.log(max);
+    // console.log(max);
+    if (max === 0) { max = 1; } // no need to plot this!
     let initialX = gap;
     for (let i = 0; i < arr.length; ++i) {
+      // compute and draw bar(rectangle)
       let count = arr[i];
       ctx.fillStyle = i===0 ? 'rgb(255,0,0)' : 'rgb(0, 0, 255)';
       let height = Math.floor(0.8 * maxHeight * (count / max));
       ctx.fillRect(initialX, maxHeight-height, width, height);
+      // draw edges of rectangle.
+      ctx.strokeStyle='black';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(initialX, maxHeight-height, width, height);
+
+      // stroke count in one field.
       ctx.strokeStyle = "green";
       ctx.lineWidth = 1;
       ctx.font = "36px arial";
-      ctx.strokeText(`${count}`, initialX + 16, maxHeight-height-20);
+      ctx.strokeText(`${count}`, initialX, maxHeight-height-20);
       initialX += (width + gap);
     }
     initialX = gap;
@@ -86,7 +97,7 @@
       ctx.strokeStyle = "black";
       ctx.lineWidth = 1;
       ctx.font = "24px Tahoma";
-      ctx.strokeText(`${strs[i]}`, initialX, 30);
+      ctx.strokeText(`${strs[i]}`, initialX, maxHeight + 30);
       initialX += (width + gap);
     }
   }
@@ -99,6 +110,6 @@
   {% endfor %}
 
   let distribution = getDistribution(gradearr);
-  draw(distribution, 60, 30, chart.width, chart.height);
+  draw(distribution, 60, 60, chart.width, chart.height - 60, 60);
 </script>
 {% endblock content %}
