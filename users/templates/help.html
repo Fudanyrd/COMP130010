@@ -1,32 +1,164 @@
 {% extends "base.html" %} {% block header %}
 <title>help-center</title>
 {% endblock header %} {% block content %}
+<style>
+  h1 {
+    font-family: Tahoma;
+    text-align: center;
+    font-size: 40px;
+  }
+  .entry {
+    font-family: Tahoma;
+    text-align: left;
+    margin-left: 300px;
+    margin-right: 300px;
+    background-color: #f3f3f3;
+    padding: 10px 20px 10px 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #333;
+    box-shadow: 3px 5px 5px #555;
+  }
+  h2 {
+    font-size: 28px;
+  }
+  .para {
+    font-size: 20px;
+    padding-bottom: 10px;
+  }
+  th {
+    border: 2px solid black;
+    text-align: center;
+    padding: 10px 20px 10px 20px;
+  }
+  td {
+    border: 2px solid black;
+    text-align: center;
+    padding: 10px 20px 10px 20px;
+  }
+  table {
+    border: 4px solid black;
+  }
+</style>
 <div>
-  <h2>About this web app</h2>
-  <p>
-    This web app intends to help instructors fill in, view and amend grades
-    easily. All components of this app is developed by 'yrd'(who is also an
-    admin of the website).
-  </p>
+  <h1>Help Center</h1>
+  <div class="entry">
+    <h2>About this Grade App</h2>
+    <hr />
+    <div class="para">
+      <p>
+        This web app intends to help instructors fill in, view and amend grades
+        easily. All components of this app is developed by 'yrd'(who is also an
+        admin of the website).
+      </p>
+      <p>
+        This application is open source(i.e. free), you are free to copy and
+        redistribute it. Source code can be accessed through this
+        <a href="https://github.com/Fudanyrd/COMP130010.git">link</a>.
+      </p>
+    </div>
+  </div>
 
-  <h2>To instructors</h2>
-  <p>
-    If you don't have an account, contact one of the admins from academic affair
-    center to create one (you can find their username and email list below). If
-    you find a bug of this app, feel free to report this to the developer 'yrd'
-    by email.
-  </p>
-  <h2>List of admins</h2>
-  <table>
-    <tbody>
-      {% for admin in admins %}
-      <tr>
-        <td>{{ admin.username }}</td>
-        <td>{{ admin.email }}</td>
-        <td><a href="mailto:{{ admin.email}}" >mail to him</a></td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="entry">
+    <h2>To Instructors</h2>
+    <hr />
+    <div class="para">
+      <p>First of all, Thanks for using this grade app!</p>
+      <p>
+        You can use this app to import, view and modify the grades of your
+        students almost effortlessly. If you find this true, that's good! That's
+        the effect I intended. However, chances are that you may find it hard to
+        use. In this case please email the admins in the list below to let us
+        know so that we can make further improvements to the app.
+      </p>
+      <p>
+        Note that you can <b>only</b> access grades of course(s) you are
+        teaching! This is a privacy protection mechanism. If you try to access
+        grades from other courses, your request will be blocked by this app(i.e.
+        you will see a page complaining that "404 not found"). Please don't be
+        surprised by this policy.
+      </p>
+      <p>
+        Also, you must <a href="{% url 'users:login' %}">login</a> before being
+        allowed to access the grades. If you don't have an account or forget
+        your password, mail one of the admins below so that we can create an
+        account or change the password for you.
+      </p>
+      <p>Best, <a href="mailto:yangrundong7@gmail.com">yrd</a></p>
+    </div>
+  </div>
+
+  <div class="entry">
+    <h2>List of Admins</h2>
+    <hr />
+    <table>
+      <tbody>
+        <tr>
+          <th scope="col">Username</th>
+          <th scope="col">Email</th>
+          <th scope="col">Operation</th>
+        </tr>
+        {% for admin in admins %}
+        <tr>
+          <th scope="row">{{ admin.username }}</th>
+          <td>{{ admin.email }}</td>
+          <td><a href="mailto:{{ admin.email}}">mail to him</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% if admins %}
+<script>
+  let tableEntries = [...document.querySelectorAll('td')];
+  let emails = document.querySelectorAll('a');
+  let len = emails.length - Math.floor(tableEntries.length / 2);
+  for (let i = 0; i < tableEntries.length; ++i) {
+    let entry = tableEntries[i];
+    entry.addEventListener('mouseenter', (event) => {
+      entry.style.backgroundColor = i % 2 === 0 ? '#333' : '#555';
+      entry.style.color = 'white';
+      if (i % 2 === 1) {
+        emails[Math.floor(i / 2) + len].style.color = 'white';
+      }
+    });
+    entry.addEventListener('mouseleave', (event) => {
+      entry.style.backgroundColor = '#f3f3f3';
+      entry.style.color = 'black';
+      if (i % 2 === 1) {
+        emails[Math.floor(i / 2) + len].style.color = 'black';
+      }
+    });
+  } 
+
+  let attrs = [...document.querySelectorAll('th')];
+  for (let i = 0; i < attrs.length; ++i) {
+    let entry = attrs[i];
+    entry.addEventListener('mouseenter', (event) => {
+      entry.style.backgroundColor = i % 2 === 0 ? '#333' : '#555';
+      entry.style.color = 'white';
+    });
+    entry.addEventListener('mouseleave', (event) => {
+      entry.style.backgroundColor = '#f3f3f3';
+      entry.style.color = 'black';
+    });
+  }
+
+  let blocks = document.querySelectorAll('div.entry');
+  let colors = ['red', 'green', 'blue'];
+  for (let i = 0; i < blocks.length; ++i) {
+    let block = blocks[i];
+    block.addEventListener('mouseenter', (event) =>{
+      block.style.border = `4px solid ${colors[i]}`;
+      block.style.boxShadow = '3px 5px 5px goldenrod';
+    });
+    block.addEventListener('mouseleave', (event) =>{
+      block.style.border = `1px solid #333`;
+      block.style.boxShadow = '3px 5px 5px #555';
+    });
+  }
+</script>
+{% endif %}
+  {% endblock content %}
 </div>
-{% endblock content %}

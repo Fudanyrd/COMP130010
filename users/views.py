@@ -25,7 +25,7 @@ def help(request):
     cursor = connection.cursor()
     cursor.execute(
         """
-        select email, username from auth_user where is_superuser = 1
+        select email, username from auth_user where is_superuser = 1 order by username
         """
     )
     admins = []
