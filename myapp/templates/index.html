@@ -1,5 +1,149 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %} {% load static %}
+<style>
+  img {
+    height: 180px;
+    width: 200px;
+    margin-left: 584px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    border-radius: 10px;
+    box-shadow: 3px 5px 5px #555;
+  }
+  .headline {
+    text-align: center;
+    font-family: Tahoma;
+    font-size: 32px;
+  }
+  .flexidx {
+    display: flex;
+    flex-direction: row;
+  }
+  .board {
+    color: #333;
+    font-family: Tahoma;
+  }
+  .title {
+    font-size: 26px;
+    text-align: center;
+    align-items: center;
+    margin-left: 80px;
+  }
+  .bta {
+    color: white;
+    background-color: #396dff;
+    height: 40px;
+    width: 160px;
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-left: 50px;
+    box-shadow: 3px 5px 5px #555;
+  }
+  ul {
+    padding-left: 0;
+  }
+  li {
+    font-family: Tahoma;
+    font-size: 20px;
+  }
+</style>
+<img src="{% static 'myapp/failure.png' %}" />
 
-{% block content %}
-  <p>you may view all <a href="{% url 'myapp:courses' %}">courses;</a></p>
+<div>
+  <div class="headline">
+    <div><b>Grade System</b></div>
+    <hr />
+  </div>
+  <div class="flexidx">
+    <div style="margin: 20px 40px 20px 200px">
+      <b class="title" style="margin-left: 10px">About this app</b>
+      <div>
+        <ul>
+          <li>Developed by Fudanyrd</li>
+          <li>Using Django, MySql, JavaScript</li>
+          <li>Stable, fast, secure</li>
+        </ul>
+      </div>
+      <div class="bta" style="margin-left: 10px">
+        {% if user.is_authenticated %}
+        <a
+          href="{% url 'myapp:courses' %}"
+          style="
+            color: white;
+            font-size: 24px;
+            font-family: Tahoma;
+            margin-left: 30px;
+          "
+          >Continue</a
+        >
+        {% else %}
+        <a
+          href="{% url 'users:login' %}"
+          style="
+            color: white;
+            font-size: 24px;
+            font-family: Tahoma;
+            margin-left: 30px;
+          "
+          >Continue</a
+        >
+        {% endif %}
+      </div>
+    </div>
+    <div style="margin: 20px 0 20px 440px">
+      <b class="title">HELP!!!</b>
+      <div>
+        <ul>
+          <li>Having trouble using this app?</li>
+          <li>Don't have account or forget password?</li>
+          <li>Need to contact the admin?</li>
+        </ul>
+      </div>
+      <div class="bta">
+        <a
+          href="{% url 'users:help' %}"
+          style="
+            color: white;
+            font-size: 24px;
+            font-family: Tahoma;
+            margin-left: 16px;
+          "
+          >Help Center</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  // image interaction with user.
+  let image = document.querySelector("img");
+  image.addEventListener("mouseenter", (event) => {
+    image.style.width = "240px";
+    image.style.height = "216px";
+    image.style.boxShadow = "3px 5px 5px goldenrod";
+    image.style.border = "3px solid blue";
+  });
+  image.addEventListener("mouseleave", (event) => {
+    image.style.width = "200px";
+    image.style.height = "180px";
+    image.style.boxShadow = "3px 5px 5px #555";
+    image.style.border = "0";
+  });
+
+  // psuedo button insteraction with user.
+  let buttons = document.querySelectorAll("div.bta"); // they are psuedo buttons, though.
+  for (let i = 0; i < buttons.length; ++i) {
+    buttons[i].addEventListener("mouseenter", (event) => {
+      buttons[i].style.height = "50px";
+      // buttons[i].style.width = '200px';
+      buttons[i].style.border = "3px solid red";
+      buttons[i].style.boxShadow = "3px 5px 5px goldenrod";
+    });
+    buttons[i].addEventListener("mouseleave", (event) => {
+      buttons[i].style.height = "40px";
+      // buttons[i].style.width = '160px';
+      buttons[i].style.border = "0";
+      buttons[i].style.boxShadow = "3px 5px 5px #555";
+    });
+  }
+</script>
 {% endblock content %}

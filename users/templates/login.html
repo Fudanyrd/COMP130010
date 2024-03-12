@@ -33,7 +33,7 @@
   {% csrf_token %} {{ form.as_p }}
   <div class="buttonbar">
     <button type="submit" name="login" class="buttonitem">
-      <b style="color: white">Sign in</b>
+      <b style="color: white;font-size:24px;font-family:Tahoma;">Sign in</b>
     </button>
   </div>
   <input type="hidden" name="next" value="{% url 'myapp:index' %}" />
