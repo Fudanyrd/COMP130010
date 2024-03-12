@@ -45,8 +45,9 @@
       background-color: #f8f8f8;
     }
     .navbox {
-      margin: 15px 15px 10px 15px;
+      padding: 15px 15px 10px 15px;
       color: #333;
+      border-radius: 5px;
     }
     .navgreet {
       margin: 10px 15px 10px 15px;
@@ -67,7 +68,7 @@
   {% if user.is_authenticated %}
   <nav>
     <div class="flex">
-      <div class="navbox" style="font-size: x-large; margin-top: 10px">
+      <div class="navbox" style="font-size: x-large; padding-top:10px ">
         Grade System
       </div>
       <div class="navbox"><a href="{% url 'myapp:courses' %}">Courses</a></div>
@@ -83,7 +84,7 @@
   {% else %}
   <nav>
     <div class="flex">
-      <div class="navbox" style="font-size: x-large; margin-top: 10px">
+      <div class="navbox" style="font-size: x-large; padding-top: 10px">
         Grade System
       </div>
       <div class="navbox"><a href="{% url 'users:login' %}">Courses</a></div>
@@ -101,16 +102,10 @@
   }
   for (let i = 1; i < navboxes.length; ++i) {
     navboxes[i].addEventListener('mouseenter', (event) => {
-       navboxes[i].style.fontSize = '30px';  
-       navboxes[i].style.color = 'blue';
-       navboxes[i].style.marginTop = '5px';
-       navboxes[i].style.marginBottom = '5px';
+       navboxes[i].style.boxShadow = '0 0 5px 3px rgb(32,128,255)';
     });
     navboxes[i].addEventListener('mouseleave', (event) => {
-       navboxes[i].style.fontSize = '18px';  
-       navboxes[i].style.color = '#333';
-       navboxes[i].style.marginTop = '15px';
-       navboxes[i].style.marginBottom = '10px';
+       navboxes[i].style.boxShadow = '0 0 0 0 grey';
     });
   }
 </script>

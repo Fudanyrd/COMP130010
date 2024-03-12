@@ -149,15 +149,16 @@
 {% endif %}
 <script>
   let blocks = document.querySelectorAll('div.entry');
-  let colors = ['red', 'green', 'blue'];
+  borders = ['rgb(32,240,128)','rgb(240,128,32)', 'rgb(0,128,255)'];
+  shadows = ['rgb(32,240,64)','rgb(240,144,32)', 'rgb(32,128,255)'];
   for (let i = 0; i < blocks.length; ++i) {
     let block = blocks[i];
     block.addEventListener('mouseenter', (event) =>{
-      block.style.border = `4px solid ${colors[i]}`;
-      block.style.boxShadow = '3px 5px 5px goldenrod';
+      block.style.border = `2px solid ${borders[i]}`;
+      block.style.boxShadow = `0 0 5px 3px ${shadows[i]}`;
     });
     block.addEventListener('mouseleave', (event) =>{
-      block.style.border = `1px solid #333`;
+      block.style.border = '1px solid #333';
       block.style.boxShadow = '3px 5px 5px #555';
     });
   }
