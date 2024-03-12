@@ -22,13 +22,13 @@
     margin: 10px 0 10px 360px;
   }
 </style>
-{% if form.errors %}
-<p>Your username and password didn't match, please try again!</p>
-{% endif %}
 <div style="margin: 20px 280px 20px 300px">
   <p style="font-size: 20px"><b>Log in to your account.</b></p>
   <hr style="color: rgb(128, 128, 128)" />
 </div>
+  {% if form.errors %}
+    <ul style="font-size: 16px;margin-left:320px"><li>Oops, username and password didn't match!</li></ul>
+  {% endif %}
 <form method="post" action="{% url 'users:login' %}">
   {% csrf_token %} {{ form.as_p }}
   <div class="buttonbar">
@@ -42,6 +42,12 @@
   <hr style="color: rgb(128, 128, 128)" />
   <p style="font-size: 20px"><b>Don't have an account? Contact the <a href="{% url 'users:help' %}">admins</a> to create one.</b></p>
 </div>
+{% if form.errors %}
+<script>
+  let lst = document.querySelectorAll('ul')[1];
+  lst.style.marginLeft = '320px';
+</script>
+{% endif %}
 <script>
   // this script intends to further beautify this login page.
   let inputs = document.querySelectorAll("input");
