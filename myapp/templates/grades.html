@@ -1,115 +1,244 @@
-{% extends "base.html" %} {% block content %}
-<p>This is a list of all grades from course {{ course }}</p>
-<ul>
-  {% for grade in grades %}
-  <li>
-    {{ grade }} <a href="{% url 'myapp:regrade' grade.id %}">Regrade this</a>
-  </li>
-  {% if grade.passed %}
-  <p style="color: green">{{ grade.bar_chart }}</p>
-  {% else %}
-  <p style="color: red">{{ grade.bar_chart }}</p>
-  {% endif %} {% endfor %} {% for student in ungraded %}
-  <li>
-    {{ student }}: Ungraded {% if student.gender == 'M' %}
-    <a href="{% url 'myapp:givegrade' course.id student.id %}">Grade Him</a>
-    {% else %}
-    <a href="{% url 'myapp:givegrade' course.id student.id %}">Grade Her</a>
-    {% endif %}
-  </li>
-  {% empty %}
-  <p>You have given grades to all students.</p>
-  {% endfor %}
-</ul>
+{% extends "base.html" %} {% block content %} {% load static %}
+<script src="{% static 'myapp/d3.js' %}"></script>
+<script src="{% static 'myapp/plot.js' %}"></script>
 
-<p>
-  You may want to view grades as a table.
-  <a href="{% url 'myapp:gradetb' course.id %}">link</a>
-</p>
-<p>
-  For convenience, you may use this
+<h2 style="text-align: center">
+  Grades of course {{ course }}
+</h2>
+<hr />
+
+<h3 style="text-align:center"> Table View of Grades</h3>
+<style>
+  #tbcontainer {
+    width: 840px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-left: 250px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    background-color: #f3f3f3;
+    border: 2px solid #555;
+    box-shadow: 5px 3px 3px grey;
+    border-radius: 5px;
+  }
+  th
+  td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+</style>
+<div id="tbcontainer">
+  <table style="border: 4px solid black; width: 720px; margin-left: 40px">
+    <colgroup span="4"></colgroup>
+    <thead>
+      <tr>
+        <th style="border: 1px solid black" scope="col">Student</th>
+        <th style="border: 1px solid black" scope="col">Student ID</th>
+        <th style="border: 1px solid black" scope="col">Grade</th>
+        <th style="border: 1px solid black" scope="col">Operation</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for grade in grades %}
+      <tr>
+        <th style="border: 1px solid black" scope="row">{{ grade.sname }}</th>
+        <td style="border: 1px solid black">{{ grade.sid }}</td>
+        {% if grade.passed %}
+        <td style="color: green; border: 1px solid black">{{ grade.value }}</td>
+        {% else %}
+        <td style="color: red; border: 1px solid black">{{ grade.value }}</td>
+        {% endif %}
+        <td style="border: 1px solid black">
+          <a href="{% url 'myapp:regrade' grade.id %}" class="tda"
+            >Regrade this</a
+          >
+        </td>
+      </tr>
+      {% endfor %} {% if grades %}
+      <tr>
+        <th colspan="2" scope="row" style="border: 1px solid black">
+          Average grade
+        </th>
+        <td style="border: 1px solid black">{{ average }}</td>
+        <td style="border: 1px solid black"></td>
+      </tr>
+      {% endif %} {% for student in ungraded %}
+      <tr>
+        <th style="border: 1px solid black" scope="row">{{ student.name }}</th>
+        <td style="border: 1px solid black">{{ student.sid }}</td>
+        <td style="color: blue; border: 1px solid black">ungraded</td>
+        <td style="border: 1px solid black">
+          {% if student.gender == 'M' %}
+          <a href="{% url 'myapp:givegrade' course.id student.id %}" class="tda"
+            >Grade Him</a
+          >
+          {% else %}
+          <a href="{% url 'myapp:givegrade' course.id student.id %}" class="tda"
+            >Grade Her</a
+          >
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+<p style="margin-left: 40px;margin-top:20px">
+  NOTE: For convenience, you may use this
   <a href="{% url 'myapp:gradeall' course.id %}">link</a>
   to grade all students in one form.
 </p>
+</div>
+<hr/>
 
-<canvas class="barchart" width="800" height="480"></canvas>
 <script>
-  let chart = document.querySelector('.barchart');
-  chart.style.boxShadow = '3px 5px 5px #555';
-  chart.style.borderRadius = '10px';
-  chart.style.border = '2px solid #333';
-  let ctx = chart.getContext("2d");
+  getReverseColor = (color) => {
+    switch (color) {
+      case "white":
+        return "black";
+      case "":
+      case "black":
+        return "white";
+      // red and its reverse
+      case "red":
+        return "rgb(255, 240, 64)";
+      case "rgb(255, 240, 64)":
+        return "red";
+      // green and its reverse
+      case "green":
+        return "rgb(32, 255, 128)";
+      case "rgb(32, 255, 128)":
+        return "green";
+      // blue and its reverse
+      case "blue":
+        return "rgb(64, 240, 255)";
+      case "rgb(64, 240, 255)":
+        return "blue";
+    }
+  };
 
-  // get distribution of grades.
-  getDistribution = (gds) => {
-    let res = [0, 0, 0, 0, 0];
-    for (grade of gds) {
-      if (grade >= 80) {
-        if (grade >= 90) { res[4] += 1; }
-        else { res[3] += 1; }
-      } else {
-        if (grade >= 70) { res[2] += 1; }
-        else {
-          if (grade >= 60) { res[1] += 1; }
-          else {res[0] += 1; }
+  let ths = document.querySelectorAll("th");
+  let tds = document.querySelectorAll("td");
+  for (let i = 0; i < ths.length; ++i) {
+    ths[i].style.padding = "5px 10px 5px 10px";
+    ths[i].addEventListener("mouseenter", (event) => {
+      ths[i].style.backgroundColor = "#333";
+      ths[i].style.color = "white";
+    });
+    ths[i].addEventListener("mouseleave", (event) => {
+      ths[i].style.backgroundColor = "white";
+      ths[i].style.color = "black";
+    });
+  }
+  for (let i = 0; i < tds.length; ++i) {
+    tds[i].style.padding = "5px 10px 5px 10px";
+    tds[i].style.textAlign = "center";
+    tds[i].addEventListener("mouseenter", (event) => {
+      tds[i].style.backgroundColor = "#333";
+      tds[i].style.color = getReverseColor(tds[i].style.color);
+    });
+    tds[i].addEventListener("mouseleave", (event) => {
+      tds[i].style.backgroundColor = "white";
+      tds[i].style.color = getReverseColor(tds[i].style.color);
+    });
+  }
+
+  tdas = document.querySelectorAll('a.tda');
+  for (let i = 0; i < tdas.length; ++i) {
+    tdas[i].addEventListener('mouseenter', (event) => {
+      tdas[i].style.color = "rgb(64, 240, 255)";
+    });
+    tdas[i].addEventListener('mouseleave', (event) => {
+      tdas[i].style.color = 'blue';
+    });
+  }
+  let container = document.querySelector('#tbcontainer');
+  container.addEventListener('mouseenter', (event) =>{
+    container.style.border = '2px solid rgb(32,128, 255)';
+    container.style.boxShadow = '0 0 6px 4px rgb(32,64, 255)';
+  });
+  container.addEventListener('mouseleave', (event)=>{
+    container.style.border = '2px solid #555';
+    container.style.boxShadow = '5px 3px 3px grey';
+  });
+</script>
+
+<h3 style="text-align:center">Distribution of Grades</h3>
+<div id="myplot"></div>
+<script>
+  let plot = document.querySelector('#myplot');
+  plot.style.border = '2px solid #555';
+  plot.style.backgroundColor = '#f3f3f3';
+  plot.style.width = '840px';
+  plot.style.height = '520px';
+  plot.style.margin = '20px 250px 50px 250px';
+  plot.style.boxShadow = '5px 3px 3px grey';
+  plot.style.borderRadius = '5px';
+  plot.addEventListener("mouseenter", (event) => {
+    plot.style.boxShadow = "0 0 8px 4px rgb(240,144,32)";
+    plot.style.border = "3px solid rgb(240,128,32)";
+  });
+  plot.addEventListener("mouseleave", (event) => {
+    plot.style.boxShadow = "3px 5px 5px #555";
+    plot.style.border = '2px solid #555';
+  });
+
+    // get distribution of grades.
+    getDistribution = (gds) => {
+      let res = [0, 0, 0,0, 0,0, 0];
+      for (grade of gds) {
+        if (grade >= 80) {
+          if (grade >= 90) { res[6] += 1; }
+          else {
+            if (grade >= 85) { res[5] += 1; }
+            else { res[4] += 1; }
+          }
+        } else {
+          if (grade >= 70) {
+            if (grade >= 75) { res[3] += 1; }
+            else { res[2] += 1; }
+          }
+          else {
+            if (grade >= 60) { res[1] += 1; }
+            else {res[0] += 1; }
+          }
         }
       }
+      return res;
     }
-    return res;
-  }
-  // given an array, draw the bar chart.
-  draw = (arr, width, gap,maxWidth, maxHeight, footHeight) => {
-    // width is the attribute of each bar.
-    // gap is the distance between bars.
-    let max = 0;
-    ctx.fillStyle = '#f3f3f3';
-    ctx.fillRect(0, 0, maxWidth, maxHeight + footHeight);
-    
-    for (let i = 0; i < arr.length; ++i) {
-      if (arr[i] > max) {
-        max = arr[i];
+    // given an array, draw the bar chart.
+    draw = (distr, ranges) => {
+      let dictList = [];
+      for (let i = 0; i < distr.length; ++i) {
+        dictList.push({range: ranges[i], count: distr[i]});
       }
+      const plot = Plot.plot({
+        marginTop: 22,
+        marginRight: 20,
+        marginBottom: 30,
+        marginLeft: 36,
+        width: 800,
+        height: 480,
+        grid: true,
+        // title: "grade distribution",
+        marks: [
+          Plot.barY(dictList, {x: "range", y: "count", fill: "rgba(32,48,250, 0.8)"}),
+          Plot.barY(dictList, {x: "range", y: "count", fill: "rgba(48,64,240, 0.5)", dx: 3, dy: -3}),
+          // Plot.barY(grades, {x: "spec", y: "count", fill: "rgba(32,48,250, 0.8)"}),
+          Plot.frame(),
+        ]
+      });
+      const div = document.querySelector("#myplot");
+      div.append(plot);
     }
-    // console.log(max);
-    if (max === 0) { max = 1; } // no need to plot this!
-    let initialX = gap;
-    for (let i = 0; i < arr.length; ++i) {
-      // compute and draw bar(rectangle)
-      let count = arr[i];
-      ctx.fillStyle = i===0 ? 'rgb(255,0,0)' : 'rgb(0, 0, 255)';
-      let height = Math.floor(0.8 * maxHeight * (count / max));
-      ctx.fillRect(initialX, maxHeight-height, width, height);
-      // draw edges of rectangle.
-      ctx.strokeStyle='black';
-      ctx.lineWidth = 3;
-      ctx.strokeRect(initialX, maxHeight-height, width, height);
 
-      // stroke count in one field.
-      ctx.strokeStyle = "green";
-      ctx.lineWidth = 1;
-      ctx.font = "36px arial";
-      ctx.strokeText(`${count}`, initialX, maxHeight-height-20);
-      initialX += (width + gap);
-    }
-    initialX = gap;
-    strs = ['failure', '[60,70)', '[70,80)', '[80,90)', '90+'];
-    for (let i = 0; i < 5; ++i) {
-      ctx.strokeStyle = "black";
-      ctx.lineWidth = 1;
-      ctx.font = "24px Tahoma";
-      ctx.strokeText(`${strs[i]}`, initialX, maxHeight + 30);
-      initialX += (width + gap);
-    }
-  }
+    // plot a barchart of grades to show distribution.
+    let gradearr = [];
+    // these lines will be replaced.. a little contradictory to instinct though...
+    {% for grade in grades %}
+      gradearr.push({{ grade.value }});
+    {% endfor %}
 
-  // plot a barchart of grades to show distribution.
-  let gradearr = [];
-  // these lines will be replaced.. a little contradictory to instinct though...
-  {% for grade in grades %}
-    gradearr.push({{ grade.value }});
-  {% endfor %}
-
-  let distribution = getDistribution(gradearr);
-  draw(distribution, 60, 60, chart.width, chart.height - 60, 60);
+    let distribution = getDistribution(gradearr);
+    draw(distribution, ['[0,59]', '[60,69]','[70,75]','[75,80]', '[80,85]','[85,90]', '[90,100]']);
 </script>
 {% endblock content %}

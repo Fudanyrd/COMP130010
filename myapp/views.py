@@ -91,6 +91,7 @@ def grades(request, course_id):
         'course': course,
         'grades': grades,
         'ungraded': Student.objects.filter(id__in=ungraded).order_by("sname"),
+        'average': str(avg_grade(course_id)),
     }
     return render(request, 'grades.html', context)
 

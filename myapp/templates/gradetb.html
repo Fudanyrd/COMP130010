@@ -1,57 +1,133 @@
-{% extends "base.html" %}
-{% block header %}
-{% endblock header %}
+<!--This file has been pernamently archived, i.e. not used in this project.-->
+{% extends "base.html" %} {% block header %} {% endblock header %} {% block content %}
+<style>
+  .tda {
+    color: blue;
+  }
+</style>
+<p>This is the grades to course {{ course }} in table form.</p>
+<hr />
 
-{% block content %}
-  <p> This is the grades to course {{ course }} in table form.</p>
-  <hr>
-  <table style="border: 4px solid black">
-    <colgroup span="4"></colgroup>
-    <thead>
+<table style="border: 4px solid black;width:720px">
+  <colgroup span="4"></colgroup>
+  <thead>
     <tr>
-        <th style="border: 1px solid black" scope="col">Student</th>
-        <th style="border: 1px solid black" scope="col">Student ID</th>
-        <th style="border: 1px solid black" scope="col">Grade</th>
-        <th style="border: 1px solid black" scope="col">Operation</th>
+      <th style="border: 1px solid black" scope="col">Student</th>
+      <th style="border: 1px solid black" scope="col">Student ID</th>
+      <th style="border: 1px solid black" scope="col">Grade</th>
+      <th style="border: 1px solid black" scope="col">Operation</th>
     </tr>
-    </thead>
-   <tbody>
+  </thead>
+  <tbody>
     {% for grade in grades %}
     <tr>
-        <th style="border: 1px solid black" scope="row">{{ grade.sname }}</th>
-        <td style="border: 1px solid black" >{{ grade.sid }}</td>
-        {% if grade.passed %}
-        <td style="color:green;border: 1px solid black">{{ grade.value }}</td>
+      <th style="border: 1px solid black" scope="row">{{ grade.sname }}</th>
+      <td style="border: 1px solid black">{{ grade.sid }}</td>
+      {% if grade.passed %}
+      <td style="color: green; border: 1px solid black">{{ grade.value }}</td>
+      {% else %}
+      <td style="color: red; border: 1px solid black">{{ grade.value }}</td>
+      {% endif %}
+      <td style="border: 1px solid black">
+        <a href="{% url 'myapp:regrade' grade.id %}" class="tda"
+          >Regrade this</a
+        >
+      </td>
+    </tr>
+    {% endfor %} {% if grades %}
+    <tr>
+      <th colspan="2" scope="row" style="border: 1px solid black">
+        Average grade
+      </th>
+      <td style="border: 1px solid black">{{ average }}</td>
+      <td style="border: 1px solid black"></td>
+    </tr>
+    {% endif %} {% for student in ungraded %}
+    <tr>
+      <th style="border: 1px solid black" scope="row">{{ student.name }}</th>
+      <td style="border: 1px solid black">{{ student.sid }}</td>
+      <td style="color: blue; border: 1px solid black"> ungraded </td>
+      <td style="border: 1px solid black">
+        {% if student.gender == 'M' %}
+        <a href="{% url 'myapp:givegrade' course.id student.id %}" class="tda"
+          >Grade Him</a
+        >
         {% else %}
-        <td style="color:red;border: 1px solid black">{{ grade.value }}</td>
+        <a href="{% url 'myapp:givegrade' course.id student.id %}" class="tda"
+          >Grade Her</a
+        >
         {% endif %}
-        <td style="border: 1px solid black" ><a href="{% url 'myapp:regrade' grade.id %}">Regrade this</a></td>
+      </td>
     </tr>
     {% endfor %}
-    {% if grades %}
-    <tr>
-        <th colspan="2" scope="row"style="border: 1px solid black" >Average grade</th>
-        <td style="border: 1px solid black" >{{ average }} </td>
-        <td style="border: 1px solid black" ></td>
-    </tr>
-    {% endif %}
-    {% for student in ungraded %}
-    <tr>
-        <th style="border: 1px solid black"  scope="row">{{ student.name }}</th>
-        <td style="border: 1px solid black" >{{ student.id }}</td>
-        <td style="color:blue;border: 1px solid black">{{ ungraded }}</td>
-        <td style="border: 1px solid black">
-          {% if student.gender == 'M' %}
-            <a href="{% url 'myapp:givegrade' course.id student.id %}">Grade Him</a>        
-          {% else %}
-            <a href="{% url 'myapp:givegrade' course.id student.id %}">Grade Her</a>
-          {% endif %}
-        </td>
-    </tr>
-    {% endfor %}
-  </tbody> </table>
-  <p> 
-    For convenience, you may use this <a href="{% url 'myapp:gradeall' course.id %}">link</a> 
-    to grade all students in one form.
-  </p>
+  </tbody>
+</table>
+<p>
+  For convenience, you may use this
+  <a href="{% url 'myapp:gradeall' course.id %}">link</a>
+  to grade all students in one form.
+</p>
+
+<script>
+  getReverseColor = (color) => {
+    switch (color) {
+      case "white":
+        return "black";
+      case "":
+      case "black":
+        return "white";
+      // red and its reverse
+      case "red":
+        return "rgb(255, 240, 64)";
+      case "rgb(255, 240, 64)":
+        return "red";
+      // green and its reverse
+      case "green":
+        return "rgb(32, 255, 128)";
+      case "rgb(32, 255, 128)":
+        return "green";
+      // blue and its reverse
+      case "blue":
+        return "rgb(64, 240, 255)";
+      case "rgb(64, 240, 255)":
+        return "blue";
+    }
+  };
+
+  let ths = document.querySelectorAll("th");
+  let tds = document.querySelectorAll("td");
+  for (let i = 0; i < ths.length; ++i) {
+    ths[i].style.padding = "5px 10px 5px 10px";
+    ths[i].addEventListener("mouseenter", (event) => {
+      ths[i].style.backgroundColor = "#333";
+      ths[i].style.color = "white";
+    });
+    ths[i].addEventListener("mouseleave", (event) => {
+      ths[i].style.backgroundColor = "white";
+      ths[i].style.color = "black";
+    });
+  }
+  for (let i = 0; i < tds.length; ++i) {
+    tds[i].style.padding = "5px 10px 5px 10px";
+    tds[i].style.textAlign = "center";
+    tds[i].addEventListener("mouseenter", (event) => {
+      tds[i].style.backgroundColor = "#333";
+      tds[i].style.color = getReverseColor(tds[i].style.color);
+    });
+    tds[i].addEventListener("mouseleave", (event) => {
+      tds[i].style.backgroundColor = "white";
+      tds[i].style.color = getReverseColor(tds[i].style.color);
+    });
+  }
+
+  tdas = document.querySelectorAll('a.tda');
+  for (let i = 0; i < tdas.length; ++i) {
+    tdas[i].addEventListener('mouseenter', (event) => {
+      tdas[i].style.color = "rgb(64, 240, 255)";
+    });
+    tdas[i].addEventListener('mouseleave', (event) => {
+      tdas[i].style.color = 'blue';
+    });
+  }
+</script>
 {% endblock content %}
