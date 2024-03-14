@@ -1,4 +1,6 @@
-{% extends "base.html" %} {% block header %} {% endblock header %} {% block content %}
+{% extends "base.html" %} 
+{% load bootstrap3 %}
+{% block header %} {% endblock header %} {% block content %}
 <style>
   b {
     color: #333;
@@ -17,83 +19,28 @@
     box-shadow: 5px 3px 3px grey;
     color: white;
   }
-  label {
+  hr {
+    border: none;
+    border-top: 2px solid #ddd;
     color: #333;
-    margin: 10px 0 10px 300px;
+    overflow: visible;
+    text-align: center;
+    height: 5px;
   }
 </style>
 <div style="margin: 20px 280px 20px 300px">
   <p style="font-size: 20px"><b>Log in to your account.</b></p>
   <hr style="color: rgb(128, 128, 128)" />
 </div>
-  {% if form.errors %}
-    <ul style="font-size: 16px;margin-left:320px"><li>Oops, username and password didn't match!</li></ul>
-  {% endif %}
-<form method="post" action="{% url 'users:login' %}">
-  {% csrf_token %} {{ form.as_p }}
-  <div class="buttonbar">
-    <button type="submit" name="login" class="buttonitem">
-      <b style="color: white;font-size:24px;font-family:Tahoma;">Sign in</b>
-    </button>
-  </div>
+<form method="post" action="{% url 'users:login' %}" class="form" style="margin: 20px 280px 20px 300px">
+  {% csrf_token %} {% bootstrap_form form %}
+  {% buttons %} 
+    <button name="submit" class="btn btn-primary">Sign in</button> 
+  {% endbuttons %}
   <input type="hidden" name="next" value="{% url 'myapp:index' %}" />
 </form>
 <div style="margin: 80px 280px 20px 300px">
   <hr style="color: rgb(128, 128, 128)" />
   <p style="font-size: 20px"><b>Don't have an account? Contact the <a href="{% url 'users:help' %}">admins</a> to create one.</b></p>
 </div>
-{% if form.errors %}
-<script>
-  let lst = document.querySelectorAll('ul')[1];
-  lst.style.marginLeft = '320px';
-</script>
-{% endif %}
-<script>
-  // this script intends to further beautify this login page.
-  let inputs = document.querySelectorAll("input");
-  let lbs = document.querySelectorAll("label");
-  lbs[0].style.fontSize = lbs[1].style.fontSize = '24px';
-  lbs[0].style.fontFamily = lbs[1].style.fontFamily = 'Tahoma';
-
-  inputs[1].placeholder = " Username";
-  inputs[2].placeholder = " Password";
-  inputs[1].style.width = inputs[2].style.width = "670px";
-  inputs[1].style.height = inputs[2].style.height = "30px";
-  inputs[1].style.borderRadius = inputs[2].style.borderRadius = "5px";
-  inputs[1].style.margin = "20px 0 20px 0";
-  inputs[2].style.margin = "10px 0 20px 5px";
-  inputs[1].style.boxShadow = inputs[2].style.boxShadow = "3px 5px 5px grey";
-  inputs[1].style.border = inputs[2].style.border = "1px solid black";
-  // inputs[2].style.marginLeft = '5px';
-
-  // add listener for input fields.
-  inputs[1].addEventListener("mouseenter", (event) => {
-    inputs[1].style.boxShadow = '0 0 5px 3px rgb(32,128,255)';
-    inputs[1].style.border = '1px solid rgb(0,128,255)';
-  });
-  inputs[1].addEventListener("mouseleave", (event) => {
-    inputs[1].style.boxShadow = "3px 5px 5px grey";
-    inputs[1].style.border = "1px solid black";
-  });
-  inputs[2].addEventListener("mouseenter", (event) => {
-    inputs[2].style.boxShadow = '0 0 5px 3px rgb(32,128,255)';
-    inputs[2].style.border = '1px solid rgb(0,128,255)';
-  });
-  inputs[2].addEventListener("mouseleave", (event) => {
-    inputs[2].style.boxShadow = "3px 5px 5px grey";
-    inputs[2].style.border = "1px solid black";
-  });
-
-  button = document.querySelector("button");
-  button.addEventListener("mouseenter", (event) => {
-    button.style.backgroundColor = "rgb(0, 64, 240)";
-    button.style.boxShadow = '0 0 5px 3px rgb(240,144,32)';
-    button.style.border = '2px solid rgb(240,128,32)';
-  });
-  button.addEventListener("mouseleave", (event) => {
-    button.style.backgroundColor = "#337af7";
-    button.style.boxShadow = '5px 3px 3px grey';
-    button.style.border = '1px solid #337ab7';
-  });
-</script>
 {% endblock content %}
