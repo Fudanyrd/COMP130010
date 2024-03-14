@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "myapp",
     'users',
+    "bootstrap3",
 ]
 
 MIDDLEWARE = [
@@ -126,3 +127,7 @@ STATIC_ROOT = 'myapp/static'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+BOOTSTRAP3 = { 
+  'include_jquery': True, 
+} 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+{% load bootstrap3 %}
 <head>
   {% block header %} {% endblock header %}
   <style>
@@ -62,45 +62,59 @@
         color: #333;
     }
   </style>
+  {% bootstrap_css %}
+  {% bootstrap_javascript %}
 </head>
 
 <body>
-  {% if user.is_authenticated %}
-  <nav>
-    <div class="flex">
-      <div class="navbox" style="font-size: x-large; padding-top:10px ">
-        Grade System
+      <!-- Static navbar -->
+    <nav class="navbar navbar-default navbar-static-top">
+      <div class="container">
+
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed"
+            data-toggle="collapse" data-target="#navbar"
+            aria-expanded="false" aria-controls="navbar">
+          </button>
+          <a class="navbar-brand" href="{% url 'myapp:index' %}" style="font-family:Tahoma;font-size:24px">Grade System</a>
+        </div>
+        <!-- end navbar-header -->
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'myapp:courses' %}">Courses</a></li>
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+            {% if user.is_authenticated %}
+              <li><a>Hello, {{ user.username }}.</a></li>
+              <li><a href="{% url 'users:logout' %}">log out</a></li>
+            {% else %}
+              <li><a href="{% url 'users:login' %}">log in</a> </li>
+            {% endif %}
+            <li><a href="{% url 'users:help' %}">Help Center</a></li>
+          </ul>
+        </div> <!--/.nav-collapse-->
       </div>
-      <div class="navbox"><a href="{% url 'myapp:courses' %}">Courses</a></div>
-      <div class="navgreet" style="margin-left: 320px">
-        Hello, {{ user.username}}!
-      </div>
-      <div class="navbox" style="margin-left: 400px">
-        <a href="{% url 'users:logout' %}">logout</a>
-      </div>
-      <div class="navbox"><a href="{% url 'users:help' %}">Help Center</a></div>
-    </div>
-  </nav>
-  {% else %}
-  <nav>
-    <div class="flex">
-      <div class="navbox" style="font-size: x-large; padding-top: 10px">
-        Grade System
-      </div>
-      <div class="navbox"><a href="{% url 'users:login' %}">Courses</a></div>
-      <div class="navbox" style="margin-left: 860px">
-        <a href="{% url 'users:login' %}">Login</a>
-      </div>
-      <div class="navbox"><a href="{% url 'users:help' %}">Help Center</a></div>
-    </div>
-  </nav>
-  {% endif %} {% block content %} {% endblock content %}
+    </nav>
+  {% block content %} {% endblock content %}
 <script>
-  let navboxes = document.querySelectorAll('div.navbox');
-  for (let i = 0; i < navboxes.length; ++i) {
-    navboxes[i].style.color = '#333';
+  let navboxes = document.querySelectorAll('li');
+  {% if user.is_authenticated %}
+  let length = 4;
+  {% else %}
+  let length = 3;
+  {% endif %}
+  let brand = document.querySelector('a.navbar-brand');
+  brand.addEventListener('mouseenter', (event) => {
+      brand.style.boxShadow = '0 0 5px 3px rgb(32,128,255)';
+  });
+  brand.addEventListener('mouseleave', (event) => {
+      brand.style.boxShadow = '0 0 0 0 grey';
+  });
+  for (let i = 0; i < length; ++i) {
+    navboxes[i].style.fontSize = '16px';
   }
-  for (let i = 1; i < navboxes.length; ++i) {
+  for (let i = 0; i < length; ++i) {
     navboxes[i].addEventListener('mouseenter', (event) => {
        navboxes[i].style.boxShadow = '0 0 5px 3px rgb(32,128,255)';
     });
