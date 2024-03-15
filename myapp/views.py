@@ -147,7 +147,7 @@ def regrade(request, grade_id):
             form.save()
             # get the course id and redirect there.
             return HttpResponseRedirect(reverse('myapp:grades', args=[course.id]))
-    context = {'form': form, 'grade': grade_obj, 'course': course}
+    context = {'form': form, 'grade': grade_obj, 'course': course, 'student': grade_obj.student}
     return render(request, 'regrade.html', context)
 
 @login_required
