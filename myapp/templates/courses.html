@@ -1,11 +1,56 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
+<h2 style="text-align: center; font-family: Tahoma">
+  This is a List of All Courses You Have Access to
+</h2>
+<hr />
+<style>
+  #tbcontainer {
+    width: 840px;
+    margin-left: 250px;
+    background-color: #f3f3f3;
+    border: 2px solid #555;
+    border-radius: 5px;
+    box-shadow: 5px 3px 3px grey;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  th
+  td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+  }
+</style>
+<div id="tbcontainer">
+  <h3 style="text-align:center;font-family:Tahoma;margin-bottom:20px;margin-top:0">Courses</h3>
+  <table style="border: 4px solid black; width: 720px; margin-left: 60px;text-align:center">
+    <colgroup span="4"></colgroup>
+    <thead>
+      <tr>
+        <th style="border: 1px solid black" scope="col">Course Name</th>
+        <th style="border: 1px solid black" scope="col">Course ID</th>
+        <th style="border: 1px solid black" scope="col">Operation</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for course in courses %}
+      <tr>
+        <th style="border: 1px solid black" scope="row">{{ course.cname }}</th>
+        <td style="border: 1px solid black">{{ course.cid }}</td>
+        <td style="border: 1px solid black">
+          <a href="{% url 'myapp:grades' course.id %}" class="tda"
+            >View Grade</a
+          >
+        </td>
+      </tr>
+      {% endfor %} 
+    </tbody>
+  </table>
+  <hr/>
+  <p style="text-align:center;font-size:16px">Cannot find courses you're teaching?! Contact the <a href="{% url 'users:help' %}">admins</a>!</p>
+</div>
 
-{% block content %}
-  <ul>
-    {% for course in courses %}
-      <li>{{ course }}<a href="{% url 'myapp:grades' course.id %}">View Grade of This Course</a></li>
-    {% empty %}
-      <li>No courses added! Contact website manager to add one.</li>
-    {% endfor %}
-  </ul>
+{% load static %}
+<script src="{% static 'myapp/table-event.js'%}">
+</script>
 {% endblock content %}
