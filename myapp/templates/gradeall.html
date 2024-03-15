@@ -1,14 +1,107 @@
 {% extends "base.html" %}
 
 {% block content %}
+<style>
+  #gform {
+    margin-left: 250px;
+    width: 840px;
+    background-color: #f3f3f3;
+    border: 2px solid #555;
+    border-radius: 5px;
+    box-shadow: 5px 3px 3px grey;
+    padding-top: 10px;
+    padding-bottom: 20px;
+  }
+</style>
+<h2 style="text-align: center;font-family:Tahoma">You're filling in grades of {{ course }}</h2>
+<hr/>
 <form action="{% url 'myapp:gradeall' course.id %}" method="post">
-  <ul>
+  <div id="gform">
+    <h3 style="text-align:center;margin-top:10px;margin-bottom:20px;font-family:Tahoma">Form</h3>
+  <ul style="margin-left:120px">
   {% csrf_token %}
   {% for form in forms %}
     <!--citation: https://docs.djangoproject.com/en/5.0/ref/forms/api/#outputting-forms-as-html-->
     <li>{{ form.as_table }} </li> 
   {% endfor %}
-    <button name="submit">Confirm Changes</button>
+    <button name="submit">Commit Changes</button>
   </ul>
+  <hr/>
+  <p style="text-align:center;font-size:16px"> If you encountered problems like missing students; unmatched student's name-id, contact the 
+    <a href="{% url 'users:help' %}">admins</a>!</p>
+  </div>
 </form>
+<script>
+  // add event listener for the form.
+  let form = document.querySelector('#gform');
+  form.addEventListener('mouseenter', (event) => {
+    form.style.border = '1px solid rgb(32,64,255)';
+    form.style.boxShadow = '0 0 6px 4px rgb(32,128,255)';
+  });
+  form.addEventListener('mouseleave', (event) => {
+    form.style.border = '2px solid #555';
+    form.style.boxShadow = '5px 3px 3px grey';
+  });
+
+  // select & input
+  let selects = document.querySelectorAll('select');
+  for (let i = 0; i < selects.length;++i) {
+    // styles
+    selects[i].style.paddingTop = '5px';
+    selects[i].style.paddingBottom = '5px';
+    selects[i].style.margin = '5px 10px 5px 10px';
+    selects[i].style.borderRadius = '4px';
+    selects[i].style.backgroundColor = 'white';
+    // event listener
+    selects[i].addEventListener('mouseenter', (event) => {
+      selects[i].style.border = '2px solid rgb(240,32,32)';
+      selects[i].style.boxShadow = '0 0 4px 2px rgb(240,32,64)';
+    });
+    selects[i].addEventListener('mouseleave', (event) => {
+      selects[i].style.border = '1px solid #555';
+      selects[i].style.boxShadow = '0 0 0 grey';
+    });
+  }
+  let inputs = document.querySelectorAll('input');
+  for (let i = 0; i < inputs.length; ++i) {
+    // style
+    inputs[i].style.paddingTop = '5px';
+    inputs[i].style.paddingBottom = '5px';
+    inputs[i].style.margin = '5px 10px 5px 10px';
+    inputs[i].style.backgroundColor = 'white';
+    inputs[i].style.borderRadius = '4px';
+    // event listener
+    inputs[i].addEventListener('mouseenter', (event) => {
+      inputs[i].style.border = '2px solid rgb(32,240,32)';
+      inputs[i].style.boxShadow = '0 0 4px 2px rgb(32,240,64)';
+    });
+    inputs[i].addEventListener('mouseleave', (event) => {
+      inputs[i].style.border = '1px solid #555';
+      inputs[i].style.boxShadow = '0 0 0 grey';
+    });
+  }
+
+  // button
+  //   style
+  let buttons = document.querySelectorAll('button');
+  let button = buttons[buttons.length-1];
+  button.style.borderRadius = '4px';
+  button.style.backgroundColor = 'rgb(32,64,192)';
+  button.style.boxShadow = '5px 3px 3px #555';
+  button.style.color = 'white';
+  button.style.padding = '8px 10px 8px 10px';
+  button.style.marginLeft = '200px';
+  button.style.marginTop = '20px';
+  //   events
+  button.addEventListener('mouseenter', (event)=>{
+    button.style.backgroundColor = '#396dff';
+    button.style.border = "1px solid rgb(240,128,32)";
+    button.style.boxShadow = "0 0 6px 4px rgb(240,144,32)";
+  });
+  button.addEventListener('mouseleave', (event)=>{
+    button.style.border = "0";
+    button.style.boxShadow = "3px 5px 5px #555";
+    button.style.backgroundColor = 'rgb(32,64,192)';
+  });
+</script>
 {% endblock content %}
