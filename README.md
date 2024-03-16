@@ -16,5 +16,17 @@ python manage.py createsuperuser
 ```
 and follow its instructions.
 
+# Deploy Using Docker
+To deploy using docker, run:
+```sh
+docker-compose up --build
+```
+and then `manually` run 
+```sh
+python manage.py makemigrations
+python manage.py migrate 
+```
+in the terminal of the container.
+
 # Further Reading
 For more information about this app, read the docs of it in `users/templates/help.html`.
