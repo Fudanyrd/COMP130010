@@ -1,0 +1,4 @@
+mysqlclient==2.2.0
+pymysql
+django~=4.2.0
+django-bootstrap3

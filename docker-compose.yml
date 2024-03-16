@@ -1,0 +1,43 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+networks:
+  db_network:
+    driver: bridge
+
+services:
+  db:
+    image: mysql
+    container_name: mysql
+    # ports:
+    #    - "3306:3306"
+    volumes:
+      - /root/mysql/conf:/etc/mysql/conf.d
+      - /root/mysql/logs:/logs
+      - /root/mysql/data:/var/lib/mysql
+    # NOTE: use of "mysql_native_password" is not recommended: 
+    # https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Yrd37538311  # maybe modified later
+      MYSQL_DATABASE: grade
+      MYSQL_USER: root
+      MYSQL_PASSWORD: Yrd37538311
+    networks: 
+      - db_network 
+  grade:
+    depends_on: 
+      - db
+    networks:
+      - db_network
+    command: >
+      sh -c "python3 manage.py runserver 0.0.0.0:8000 &&
+      python3 manage.py makemigrations &&
+      python3 manage.py migrate
+      "
+    container_name: grade
+    build: .
+    ports:
+      - "8000:8000"

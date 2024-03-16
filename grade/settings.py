@@ -82,6 +82,8 @@ DATABASES = {
         "NAME": "grade",
         "USER": "root",
         "PASSWORD": "Yrd37538311",
+        "HOST": "db", # db
+        "PORT": 3306,
     }
 }
 

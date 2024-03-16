@@ -12,7 +12,9 @@ def avg_grade(course_id):
     connection = mysql.connector.connect(
         user = 'root',
         password = 'Yrd37538311',
-        database = 'grade'
+        database = 'grade',
+        host = 'db',
+        port = '3306',
     )
     cursor = connection.cursor()
     cursor.execute(

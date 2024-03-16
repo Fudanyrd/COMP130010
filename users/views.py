@@ -21,6 +21,8 @@ def help(request):
         user = 'root',
         password = 'Yrd37538311',
         database='grade',    
+        host = 'db',
+        port = '3306',
     )
     cursor = connection.cursor()
     cursor.execute(
