@@ -22,9 +22,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: Yrd37538311  # maybe modified later
-      MYSQL_DATABASE: grade
-      MYSQL_USER: root
-      MYSQL_PASSWORD: Yrd37538311
+      MYSQL_DATABASE: grade             # database to use for this app
     networks: 
       - db_network 
   grade:

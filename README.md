@@ -26,7 +26,7 @@ and then `manually` run
 python manage.py makemigrations
 python manage.py migrate 
 ```
-in the terminal of the container.
+in the terminal of the container. I would appreciate it if you can suggest a fix to this(i.e. do not have to manually do so). Pull requests welcomed.
 
 # Further Reading
 For more information about this app, read the docs of it in `users/templates/help.html`.
