@@ -4,8 +4,11 @@ from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.db.models.expressions import RawSQL
 from django.contrib.auth.decorators import login_required
-from .forms import RegradeForm, GradeForm, GradeAllForm
+from .forms import RegradeForm, GradeForm, GradeAllForm, CourseFilter
 import mysql.connector
+
+glb_host = 'db'
+glb_port = '3306'
 
 def avg_grade(course_id):
     """ given the course id, calculate its average grade"""
@@ -13,8 +16,8 @@ def avg_grade(course_id):
         user = 'root',
         password = 'Yrd37538311',
         database = 'grade',
-        host = 'db',
-        port = '3306',
+        host = glb_host,
+        port = glb_port,
     )
     cursor = connection.cursor()
     cursor.execute(
@@ -53,6 +56,24 @@ def index(request):
 def courses(request):
     """ admin has access to all courses; while instructor only have access to the courses he/she taught"""
     ut = usertype(request)
+    if request.method == "POST":
+        cid = request.POST.get('cid')
+        if cid == 'any':
+            cid = ''
+        cname = request.POST.get('cname')
+        if cname == 'any':
+            cname = ''
+        if ut == 'admin':
+            courses = Course.objects.filter(cid__contains=cid).filter(cname__contains=cname).order_by('cid')
+        else:
+            instructor = (Instructor.objects.filter(tid=request.user.username))[0]
+            courses = Course.objects.filter(teacher=instructor).filter(cid__contains=cid).filter(cname__contains=cname).order_by('cid')
+        context = {
+            'form': CourseFilter(data=request.POST),
+            'courses': courses
+        }
+        return render(request, 'courses.html', context)
+    # request.method == "GET"
     if ut == 'admin':
         courses = Course.objects.order_by('cid')
     elif ut == 'instructor':
@@ -61,6 +82,7 @@ def courses(request):
     else:
         raise Http404
     context = {
+        'form': CourseFilter(),
         'courses': courses
     }
     return render(request, 'courses.html', context)

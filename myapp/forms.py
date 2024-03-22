@@ -19,3 +19,9 @@ class GradeAllForm(forms.ModelForm):
         model = Grade
         fields = ['student','grade']
         labels = {'text': 'student'}
+
+class CourseFilter(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = ['cid', 'cname']
+        labels = {'text': ''}
